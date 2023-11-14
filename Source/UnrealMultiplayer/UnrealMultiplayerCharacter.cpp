@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright (c) 2023 Sebastien Rombauts (sebastien.rombauts@gmail.com)
 
 #include "UnrealMultiplayerCharacter.h"
 #include "Engine/LocalPlayer.h"
