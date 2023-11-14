@@ -7,3 +7,19 @@
 AUnrealMultiplayerGameMode::AUnrealMultiplayerGameMode()
 {
 }
+
+void AUnrealMultiplayerGameMode::HostGame(FString InMapURL)
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->ServerTravel(InMapURL);
+	}
+}
+
+void AUnrealMultiplayerGameMode::JoinGame(FString IPAddress)
+{
+	if (APlayerController* PC = GetGameInstance()->GetFirstLocalPlayerController())
+	{
+		PC->ClientTravel(IPAddress, ETravelType::TRAVEL_Absolute);
+	}
+}

@@ -13,6 +13,14 @@ class AUnrealMultiplayerGameMode : public AGameModeBase
 
 public:
 	AUnrealMultiplayerGameMode();
+
+	// Travel to the map and start listening for client connections
+	UFUNCTION(BlueprintCallable)
+	void HostGame(FString InMapURL);
+
+	// Connect to the server listening at the IP address
+	UFUNCTION(BlueprintCallable)
+	void JoinGame(FString IPAddress);
 };
 
 
