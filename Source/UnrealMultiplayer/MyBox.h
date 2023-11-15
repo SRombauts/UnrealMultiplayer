@@ -15,7 +15,14 @@ public:
 	// Sets default values for this actor's properties
 	AMyBox();
 
+	/** Returns the properties used for network replication, this needs to be overridden by all actor classes with native replicated properties */
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+public:
+	UPROPERTY(BlueprintReadWrite, Replicated)
+	int32 MyReplicatedValue = 42;
 };

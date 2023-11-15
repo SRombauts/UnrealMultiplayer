@@ -4,9 +4,19 @@
 
 #include "UnrealMultiplayer.h"
 
+#include "Net/UnrealNetwork.h"
+
 AMyBox::AMyBox()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	bReplicates = true;
+}
+
+void AMyBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMyBox, MyReplicatedValue);
 }
 
 void AMyBox::BeginPlay()
