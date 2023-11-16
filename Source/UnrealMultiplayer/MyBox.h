@@ -18,11 +18,17 @@ public:
 	/** Returns the properties used for network replication, this needs to be overridden by all actor classes with native replicated properties */
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(BlueprintCallable)
+	void SetMyReplicatedValue(int32 InReplicatedValue);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:
-	UPROPERTY(BlueprintReadWrite, Replicated)
+	UPROPERTY(BlueprintReadWrite, ReplicatedUsing = OnRep_MyReplicatedValue, Setter = SetMyReplicatedValue)
 	int32 MyReplicatedValue = 42;
+
+	UFUNCTION()
+	virtual void OnRep_MyReplicatedValue(int32 OldReplicatedValue);
 };

@@ -34,3 +34,20 @@ void AMyBox::BeginPlay()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("BeginPlay: No Authority"));
 	}
 }
+
+void AMyBox::SetMyReplicatedValue(int32 InReplicatedValue)
+{
+	if (HasAuthority())
+	{
+		const int32 OldReplicatedValue = MyReplicatedValue;
+		MyReplicatedValue = InReplicatedValue;
+
+		OnRep_MyReplicatedValue(OldReplicatedValue);
+	}
+}
+
+void AMyBox::OnRep_MyReplicatedValue(int32 OldReplicatedValue)
+{
+	UE_LOG(LogMultiplayer, Log, TEXT("[%s] OnRep_MyReplicatedValue: %d->%d"), *GetName(), OldReplicatedValue, MyReplicatedValue);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("OnRep_MyReplicatedValue: %d->%d"), OldReplicatedValue, MyReplicatedValue));
+}
