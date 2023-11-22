@@ -54,6 +54,12 @@ AUnrealMultiplayerCharacter::AUnrealMultiplayerCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+void AUnrealMultiplayerCharacter::ServerFunction_Implementation(float InValue)
+{
+	UE_LOG(LogMultiplayerCharacter, Log, TEXT("[%s] ServerFunction_Implementation: %d"), *GetName(), InValue);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Server: ServerFunction_Implementation: %f"), InValue));
+}
+
 void AUnrealMultiplayerCharacter::BeginPlay()
 {
 	// Call the base class  
