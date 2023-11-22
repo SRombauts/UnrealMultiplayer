@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/TimerHandle.h"
 #include "GameFramework/Actor.h"
 #include "MyBox.generated.h"
 
@@ -21,14 +22,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetMyReplicatedValue(int32 InReplicatedValue);
 
+public:
+	UPROPERTY(BlueprintReadWrite, ReplicatedUsing = OnRep_MyReplicatedValue, Setter = SetMyReplicatedValue)
+	int32 MyReplicatedValue = 3;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	UPROPERTY(BlueprintReadWrite, ReplicatedUsing = OnRep_MyReplicatedValue, Setter = SetMyReplicatedValue)
-	int32 MyReplicatedValue = 42;
-
+private:
 	UFUNCTION()
 	virtual void OnRep_MyReplicatedValue(int32 OldReplicatedValue);
+	
+	void OnTimer();
+
+private:
+	FTimerHandle TimerHandle;
 };
