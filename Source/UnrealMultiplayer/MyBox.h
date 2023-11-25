@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetMyReplicatedValue(int32 InReplicatedValue);
 
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
+	void MulticastExplode();
+
 public:
 	UPROPERTY(BlueprintReadWrite, ReplicatedUsing = OnRep_MyReplicatedValue, Setter = SetMyReplicatedValue)
 	int32 MyReplicatedValue = 3;
@@ -32,7 +35,7 @@ protected:
 
 private:
 	UFUNCTION()
-	virtual void OnRep_MyReplicatedValue(int32 OldReplicatedValue);
+	virtual void OnRep_MyReplicatedValue(int32 InOldReplicatedValue);
 	
 	void OnTimer();
 

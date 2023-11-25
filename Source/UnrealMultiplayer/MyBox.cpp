@@ -48,26 +48,46 @@ void AMyBox::SetMyReplicatedValue(int32 InReplicatedValue)
 	}
 }
 
-void AMyBox::OnRep_MyReplicatedValue(int32 OldReplicatedValue)
+void AMyBox::MulticastExplode_Implementation()
 {
-	UE_LOG(LogMultiplayer, Log, TEXT("[%s] OnRep_MyReplicatedValue: %d->%d"), *GetName(), OldReplicatedValue, MyReplicatedValue);
 	if (HasAuthority())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Server: OnRep_MyReplicatedValue: %d->%d"), OldReplicatedValue, MyReplicatedValue));
+		UE_LOG(LogMultiplayer, Log, TEXT("[%s] Server: MulticastExplode_Implementation"), *GetName());
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Server: MulticastExplode_Implementation")));
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Client %d: OnRep_MyReplicatedValue: %d->%d"), GPlayInEditorID, OldReplicatedValue, MyReplicatedValue));
+		UE_LOG(LogMultiplayer, Log, TEXT("[%s] Client %d: MulticastExplode_Implementation"), *GetName(), (int32)GPlayInEditorID);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Client %d: MulticastExplode_Implementation"), (int32)GPlayInEditorID));
+	}
+}
+
+void AMyBox::OnRep_MyReplicatedValue(int32 InOldReplicatedValue)
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogMultiplayer, Log, TEXT("[%s] Server: OnRep_MyReplicatedValue: %d->%d"), *GetName(), InOldReplicatedValue, MyReplicatedValue);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Server: OnRep_MyReplicatedValue: %d->%d"), InOldReplicatedValue, MyReplicatedValue));
+	}
+	else
+	{
+		UE_LOG(LogMultiplayer, Log, TEXT("[%s] Client %d: OnRep_MyReplicatedValue: %d->%d"), *GetName(), (int32)GPlayInEditorID, InOldReplicatedValue, MyReplicatedValue);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Client %d: OnRep_MyReplicatedValue: %d->%d"), (int32)GPlayInEditorID, InOldReplicatedValue, MyReplicatedValue));
 	}
 }
 
 void AMyBox::OnTimer()
 {
-	UE_LOG(LogMultiplayer, Log, TEXT("[%s] OnTimer"), *GetName());
-	SetMyReplicatedValue(MyReplicatedValue - 1);
-	
-	if (MyReplicatedValue <= 0)
+	if (HasAuthority())
 	{
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+		UE_LOG(LogMultiplayer, Log, TEXT("[%s] OnTimer"), *GetName());
+		SetMyReplicatedValue(MyReplicatedValue - 1);
+	
+		if (MyReplicatedValue <= 0)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+
+			MulticastExplode();
+		}
 	}
 }
