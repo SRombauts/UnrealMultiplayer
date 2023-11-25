@@ -4,6 +4,8 @@
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Engine/StaticMesh.h"
+#include "Engine/StaticMeshActor.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
@@ -54,17 +56,6 @@ AUnrealMultiplayerCharacter::AUnrealMultiplayerCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
-void AUnrealMultiplayerCharacter::ServerFunction_Implementation(float InValue)
-{
-	UE_LOG(LogMultiplayerCharacter, Log, TEXT("[%s] ServerFunction_Implementation: %d"), *GetName(), InValue);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Server: ServerFunction_Implementation: %f"), InValue));
-}
-
-bool AUnrealMultiplayerCharacter::ServerFunction_Validate(float InValue)
-{
-	return (InValue >= 0.0f && InValue <= 100.0f);
-}
-
 void AUnrealMultiplayerCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -78,6 +69,37 @@ void AUnrealMultiplayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+}
+
+void AUnrealMultiplayerCharacter::ServerFunction_Implementation(float InValue)
+{
+	UE_LOG(LogMultiplayerCharacter, Log, TEXT("[%s] ServerFunction_Implementation: %d"), *GetName(), InValue);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Server: ServerFunction_Implementation: %f"), InValue));
+
+	if (!MeshToSpawn)
+		return;
+
+	if (AStaticMeshActor* StaticMeshActor = GetWorld()->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass()))
+	{
+		StaticMeshActor->SetReplicates(true);
+		StaticMeshActor->SetReplicateMovement(true);
+		StaticMeshActor->SetMobility(EComponentMobility::Movable);
+		const FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.f;
+		StaticMeshActor->SetActorLocation(SpawnLocation);
+
+		if (UStaticMeshComponent* StaticMeshComponent = StaticMeshActor->GetStaticMeshComponent())
+		{
+			StaticMeshComponent->SetSimulatePhysics(true);
+			StaticMeshComponent->SetIsReplicated(true);
+			StaticMeshComponent->SetStaticMesh(MeshToSpawn);
+			StaticMeshComponent->SetMobility(EComponentMobility::Movable);
+		}
+	}
+}
+
+bool AUnrealMultiplayerCharacter::ServerFunction_Validate(float InValue)
+{
+	return (InValue >= 0.0f && InValue <= 100.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////
