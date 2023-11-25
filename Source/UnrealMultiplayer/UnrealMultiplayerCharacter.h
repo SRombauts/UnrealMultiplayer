@@ -47,7 +47,7 @@ class AUnrealMultiplayerCharacter : public ACharacter
 public:
 	AUnrealMultiplayerCharacter();
 
-	UFUNCTION(Server, Reliable, BlueprintCallable)
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void ServerFunction(float InValue);
 
 protected:

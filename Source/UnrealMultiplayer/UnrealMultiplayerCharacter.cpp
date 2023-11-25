@@ -60,6 +60,11 @@ void AUnrealMultiplayerCharacter::ServerFunction_Implementation(float InValue)
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Server: ServerFunction_Implementation: %f"), InValue));
 }
 
+bool AUnrealMultiplayerCharacter::ServerFunction_Validate(float InValue)
+{
+	return (InValue >= 0.0f && InValue <= 100.0f);
+}
+
 void AUnrealMultiplayerCharacter::BeginPlay()
 {
 	// Call the base class  
